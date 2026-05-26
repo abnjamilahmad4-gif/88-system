@@ -1,0 +1,20 @@
+{
+  "name": "88bot",
+  "version": "1.0.0",
+  "description": "بوت سيرفر 88 — بوت سيستيم احترافي متكامل",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["discord", "bot", "88"],
+  "author": "88 Team",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "mongoose": "^8.8.0",
+    "dotenv": "^16.4.5",
+    "ms": "^2.1.3",
+    "skia-canvas": "^1.0.2"
+  }
+}
