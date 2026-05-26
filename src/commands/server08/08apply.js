@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const Guild = require('../../models/Guild');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88complaint')
-        .setDescription('تقديم شكوى سريعة (يفتح تذكرة)'),
+        .setName('08apply')
+        .setDescription('تقديم طلب للإدارة (يفتح تذكرة)'),
     async execute(interaction) {
         const guildData = await Guild.findOne({ guildId: interaction.guild.id });
         if (!guildData) {
@@ -25,25 +25,9 @@ module.exports = {
             }
         ];
 
-        // إضافة صلاحيات رتب الإدارة والمشرفين والمساعدين كطاقم دعم
+        // إضافة صلاحيات رتب الإدارة فقط للتقديم الإداري
         if (guildData.admin_roles && guildData.admin_roles.length > 0) {
             guildData.admin_roles.forEach(id => {
-                permissionOverwrites.push({
-                    id: id,
-                    allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
-                });
-            });
-        }
-        if (guildData.mod_roles && guildData.mod_roles.length > 0) {
-            guildData.mod_roles.forEach(id => {
-                permissionOverwrites.push({
-                    id: id,
-                    allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
-                });
-            });
-        }
-        if (guildData.helper_roles && guildData.helper_roles.length > 0) {
-            guildData.helper_roles.forEach(id => {
                 permissionOverwrites.push({
                     id: id,
                     allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
@@ -53,27 +37,23 @@ module.exports = {
 
         try {
             const ticketChannel = await interaction.guild.channels.create({
-                name: `complaint-${interaction.user.username}`,
+                name: `apply-${interaction.user.username}`,
                 type: ChannelType.GuildText,
                 parent: categoryId,
                 permissionOverwrites: permissionOverwrites,
             });
 
-            // بناء المنشنز للرتب
+            // بناء المنشنز للإدارة
             let mentions = '';
-            if (guildData.helper_roles && guildData.helper_roles.length > 0) {
-                mentions += guildData.helper_roles.map(id => `<@&${id}> `).join('');
-            } else if (guildData.mod_roles && guildData.mod_roles.length > 0) {
-                mentions += guildData.mod_roles.map(id => `<@&${id}> `).join('');
-            } else if (guildData.admin_roles && guildData.admin_roles.length > 0) {
+            if (guildData.admin_roles && guildData.admin_roles.length > 0) {
                 mentions += guildData.admin_roles.map(id => `<@&${id}> `).join('');
             }
 
             const embed = new EmbedBuilder()
-                .setTitle('🚨 تذكرة شكوى 🚨')
-                .setDescription(`مرحباً <@${interaction.user.id}>،\nيرجى طرح شكواك بالتفصيل هنا وسيقوم فريق الدعم بالرد عليك في أقرب وقت.\n\nمنشن الدعم: ${mentions || '@الدعم'}`)
+                .setTitle('📝 طلب تقديم للإدارة 📝')
+                .setDescription(`مرحباً <@${interaction.user.id}>،\nلقد قمت بفتح تذكرة تقديم للإدارة. يرجى كتابة تفاصيل طلبك هنا.\n\nمنشن الإدارة: ${mentions || '@الإدارة'}`)
                 .setColor('#FFD700')
-                .setFooter({ text: 'سيرفر 88' });
+                .setFooter({ text: 'سيرفر 08' });
 
             const row = new ActionRowBuilder()
                 .addComponents(
@@ -87,14 +67,14 @@ module.exports = {
             await ticketChannel.send({ content: `${mentions} | <@${interaction.user.id}>`, embeds: [embed], components: [row] });
 
             const replyEmbed = new EmbedBuilder()
-                .setTitle('✅ تم تقديم الشكوى')
-                .setDescription(`تم فتح تذكرة لشكواك بنجاح: <#${ticketChannel.id}>`)
+                .setTitle('✅ تم إنشاء طلبك')
+                .setDescription(`تم فتح تذكرة تقديم بنجاح: <#${ticketChannel.id}>`)
                 .setColor('#FFD700');
 
             await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
         } catch (error) {
             console.error(error);
-            await interaction.reply({ content: 'حدث خطأ أثناء محاولة فتح التذكرة.', ephemeral: true });
+            await interaction.reply({ content: 'حدث خطأ أثناء محاولة فتح التذكرة. تأكد من إعدادات السيرفر.', ephemeral: true });
         }
     },
 };

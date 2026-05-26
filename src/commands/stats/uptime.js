@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
             .setTitle('⏱️ مدة تشغيل البوت')
             .setDescription(`البوت يعمل بدون انقطاع منذ:\n\n**${days} يوم و ${hours} ساعة و ${minutes} دقيقة و ${seconds} ثانية**`)
             .setColor('#2b2d31')
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
         
         await interaction.reply({ embeds: [embed] });

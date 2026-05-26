@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,7 +14,7 @@ module.exports = {
             .setURL(avatarUrl)
             .setImage(avatarUrl)
             .setColor('#2b2d31')
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed] });

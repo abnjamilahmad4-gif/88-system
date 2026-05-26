@@ -1,9 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const Guild = require('../../models/Guild');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88appeal')
+        .setName('08appeal')
         .setDescription('طلب استئناف / طعن في عقوبة (يفتح تذكرة)'),
     async execute(interaction) {
         const guildData = await Guild.findOne({ guildId: interaction.guild.id });
@@ -63,7 +63,7 @@ module.exports = {
                 .setTitle('⚖️ طلب استئناف عقوبة ⚖️')
                 .setDescription(`مرحباً <@${interaction.user.id}>،\nالرجاء شرح سبب طعنك في العقوبة بوضوح، وسيقوم المشرفون بالرد عليك قريباً.\n\nمنشن المشرفين: ${mentions || '@المشرفين'}`)
                 .setColor('#FFD700')
-                .setFooter({ text: 'سيرفر 88' });
+                .setFooter({ text: 'سيرفر 08' });
 
             const row = new ActionRowBuilder()
                 .addComponents(

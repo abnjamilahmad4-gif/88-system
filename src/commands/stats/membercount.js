@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ module.exports = {
                 { name: '👤 الأعضاء البشر', value: `${humans}`, inline: true },
                 { name: '🤖 البوتات', value: `${bots}`, inline: true }
             )
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
         
         await interaction.reply({ embeds: [embed] });

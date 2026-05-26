@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
 const config = require('../../config');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
         const embedColor = config.colors?.primary || '#FFD700';
 
         const mainEmbed = new EmbedBuilder()
-            .setTitle(`🤖 قائمة مساعدة ${config.botName || '88Bot'}`)
+            .setTitle(`🤖 قائمة مساعدة ${config.botName || '08Bot'}`)
             .setDescription(
                 `مرحباً بك ${interaction.user}! يرجى اختيار القسم المناسب من القائمة المنسدلة بالأسفل لاستكشاف الأوامر وشرحها المختصر.`
             )
@@ -23,9 +23,9 @@ module.exports = {
                 { name: '📊 المستويات والستريك', value: 'بطاقات التفاعل، لوحات الصدارة والستريك اليومي.', inline: true },
                 { name: '🎫 التذاكر والبلاغات', value: 'فتح وإغلاق التذاكر وتلقي بلاغات الأعضاء.', inline: true },
                 { name: '👥 معلومات وإحصائيات', value: 'عرض معلومات السيرفر، الأعضاء، البوت والصور.', inline: true },
-                { name: '👑 سيرفر 88 الخاص', value: 'أوامر مخصصة فقط لهوية وفعاليات سيرفر 88.', inline: true }
+                { name: '👑 سيرفر 08 الخاص', value: 'أوامر مخصصة فقط لهوية وفعاليات سيرفر 08.', inline: true }
             )
-            .setFooter({ text: '88Bot System • اختر القسم أدناه', iconURL: interaction.client.user.displayAvatarURL() });
+            .setFooter({ text: '08Bot System • اختر القسم أدناه', iconURL: interaction.client.user.displayAvatarURL() });
 
         const selectMenu = new StringSelectMenuBuilder()
             .setCustomId('help_category_select')
@@ -62,9 +62,9 @@ module.exports = {
                     emoji: '👥'
                 },
                 {
-                    label: 'أوامر سيرفر 88',
-                    description: 'أوامر 88verify, 88apply, 88rules, 88team...',
-                    value: 'server88',
+                    label: 'أوامر سيرفر 08',
+                    description: 'أوامر 08verify, 08apply, 08rules, 08team...',
+                    value: 'server08',
                     emoji: '👑'
                 }
             ]);
@@ -156,22 +156,22 @@ module.exports = {
                         { name: '`/membercount /serverboost`', value: 'إحصائيات الأعضاء والتواجد وبوستات السيرفر.' }
                     );
             }
-            else if (selectedValue === 'server88') {
+            else if (selectedValue === 'server08') {
                 updatedEmbed
-                    .setTitle('👑 أوامر سيرفر 88 الخاصة')
-                    .setDescription('مجموعة الأوامر المعدة خصيصاً لهوية سيرفر 88:')
+                    .setTitle('👑 أوامر سيرفر 08 الخاصة')
+                    .setDescription('مجموعة الأوامر المعدة خصيصاً لهوية سيرفر 08:')
                     .addFields(
-                        { name: '`/88verify`', value: 'إرسال لوحة التوثيق لتوثيق الحسابات برتبة العضوية.' },
-                        { name: '`/88apply /88appeal`', value: 'تقديم طلب التقديم للإشراف أو طلب فك الحظر.' },
-                        { name: '`/88rules /88info`', value: 'عرض شروط وقوانين السيرفر وقوانينه المنسقة.' },
-                        { name: '`/88team /88partners`', value: 'عرض شركاء السيرفر وأعضاء الطاقم الإداري.' },
-                        { name: '`/88boosters /88halloffame`', value: 'لوحات الشرف للداعمين والأعضاء الأسطوريين.' },
-                        { name: '`/88event /88challenge`', value: 'الإعلان عن تحديات ومسابقات جديدة للسيرفر.' },
-                        { name: '`/88complaint /88feedback`', value: 'تقديم شكوى أو اقتراح إيجابي لتطوير السيرفر.' }
+                        { name: '`/08verify`', value: 'إرسال لوحة التوثيق لتوثيق الحسابات برتبة العضوية.' },
+                        { name: '`/08apply /08appeal`', value: 'تقديم طلب التقديم للإشراف أو طلب فك الحظر.' },
+                        { name: '`/08rules /08info`', value: 'عرض شروط وقوانين السيرفر وقوانينه المنسقة.' },
+                        { name: '`/08team /08partners`', value: 'عرض شركاء السيرفر وأعضاء الطاقم الإداري.' },
+                        { name: '`/08boosters /08halloffame`', value: 'لوحات الشرف للداعمين والأعضاء الأسطوريين.' },
+                        { name: '`/08event /08challenge`', value: 'الإعلان عن تحديات ومسابقات جديدة للسيرفر.' },
+                        { name: '`/08complaint /08feedback`', value: 'تقديم شكوى أو اقتراح إيجابي لتطوير السيرفر.' }
                     );
             }
 
-            updatedEmbed.setFooter({ text: '88Bot System • استخدم القائمة المنسدلة للتنقل', iconURL: interaction.client.user.displayAvatarURL() });
+            updatedEmbed.setFooter({ text: '08Bot System • استخدم القائمة المنسدلة للتنقل', iconURL: interaction.client.user.displayAvatarURL() });
 
             await i.update({
                 embeds: [updatedEmbed],

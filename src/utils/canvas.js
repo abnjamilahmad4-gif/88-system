@@ -4,7 +4,7 @@ const { Canvas, loadImage } = require('skia-canvas');
  * وظائف بناء الصور والبطاقات باستخدام skia-canvas
  */
 
-// اللون الذهبي الأساسي لهوية البوت 88
+// اللون الذهبي الأساسي لهوية البوت 08
 const GOLD_COLOR = '#FFD700';
 const BG_COLOR = '#1A1A1A'; // خلفية داكنة لتبرز اللون الذهبي
 const TEXT_COLOR = '#FFFFFF';

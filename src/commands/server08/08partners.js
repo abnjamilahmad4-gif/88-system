@@ -1,12 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88partners')
-        .setDescription('قائمة شركاء سيرفر 88'),
+        .setName('08partners')
+        .setDescription('قائمة شركاء سيرفر 08'),
     async execute(interaction) {
         const embed = new EmbedBuilder()
-            .setTitle('🤝 شركاء سيرفر 88 🤝')
+            .setTitle('🤝 شركاء سيرفر 08 🤝')
             .setDescription('نحن فخورون بشراكاتنا مع هذه السيرفرات المميزة:')
             .setColor('#FFD700')
             .addFields(

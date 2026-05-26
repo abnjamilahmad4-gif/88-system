@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,7 +16,7 @@ module.exports = {
             .setColor('#FFD700')
             .setTitle('تحديث إعدادات المستويات')
             .setDescription(`✅ | تم تعيين رسالة الترقية بنجاح إلى:\n\n\`${msg}\``)
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed], ephemeral: true });

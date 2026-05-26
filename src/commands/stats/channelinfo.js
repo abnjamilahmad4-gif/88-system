@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -28,7 +28,7 @@ module.exports = {
                 { name: '📅 تاريخ الإنشاء', value: `<t:${parseInt(channel.createdTimestamp / 1000)}:R>`, inline: true },
                 { name: '📁 القسم التابعة له', value: channel.parent ? channel.parent.name : 'لا يوجد', inline: true }
             )
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed] });

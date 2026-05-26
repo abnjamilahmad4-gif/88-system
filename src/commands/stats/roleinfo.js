@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,7 +19,7 @@ module.exports = {
                 { name: '📌 منفصلة (Hoisted)', value: role.hoist ? 'نعم' : 'لا', inline: true },
                 { name: '🔔 قابلة للمنشن', value: role.mentionable ? 'نعم' : 'لا', inline: true }
             )
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed] });

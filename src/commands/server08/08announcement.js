@@ -1,8 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88announcement')
+        .setName('08announcement')
         .setDescription('إرسال إعلان مميز يمنشن everyone (للإداريين فقط)')
         .addStringOption(opt => opt.setName('title').setDescription('عنوان الإعلان').setRequired(true))
         .addStringOption(opt => opt.setName('content').setDescription('محتوى الإعلان').setRequired(true))
@@ -17,7 +17,7 @@ module.exports = {
             .setTitle(`📢 ${title} 📢`)
             .setDescription(content)
             .setColor('#FFD700')
-            .setFooter({ text: 'إدارة سيرفر 88' })
+            .setFooter({ text: 'إدارة سيرفر 08' })
             .setTimestamp();
 
         try {

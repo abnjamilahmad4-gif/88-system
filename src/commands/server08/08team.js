@@ -1,11 +1,11 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 const teams = []; // يُفضل استخدام قاعدة بيانات
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88team')
-        .setDescription('إدارة فرق سيرفر 88')
+        .setName('08team')
+        .setDescription('إدارة فرق سيرفر 08')
         .addSubcommand(sub => 
             sub.setName('create')
                 .setDescription('إنشاء فريق جديد')

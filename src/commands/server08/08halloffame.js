@@ -1,11 +1,11 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 // للتوضيح، يفترض استخدام قاعدة بيانات
 const hallOfFame = [];
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88halloffame')
+        .setName('08halloffame')
         .setDescription('إدارة قاعة المشاهير (للمالك فقط)')
         .addSubcommand(sub => 
             sub.setName('add')
@@ -43,7 +43,7 @@ module.exports = {
             await interaction.reply({ content: `تم إزالة <@${user.id}> من قاعة المشاهير.`, ephemeral: true });
         } else if (subCmd === 'list') {
             if (hallOfFame.length === 0) return interaction.reply({ content: 'قاعة المشاهير فارغة حالياً.', ephemeral: true });
-            const embed = new EmbedBuilder().setTitle('🌟 قاعة مشاهير 88 🌟').setColor('#FFD700');
+            const embed = new EmbedBuilder().setTitle('🌟 قاعة مشاهير 08 🌟').setColor('#FFD700');
             hallOfFame.forEach((u, i) => embed.addFields({ name: `✨ ${i+1}.`, value: `<@${u.id}>\nالسبب: ${u.reason}` }));
             await interaction.reply({ embeds: [embed] });
         }

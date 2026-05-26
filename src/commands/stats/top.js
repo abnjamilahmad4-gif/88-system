@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ module.exports = {
                 .setDescription('أعلى الأعضاء في الدعوات')),
     async execute(interaction) {
         const subcommand = interaction.options.getSubcommand();
-        const embed = new EmbedBuilder().setColor('#2b2d31').setFooter({ text: 'سيرفر 88' }).setTimestamp();
+        const embed = new EmbedBuilder().setColor('#2b2d31').setFooter({ text: 'سيرفر 08' }).setTimestamp();
 
         if (subcommand === 'messages') {
             embed.setTitle('💬 أعلى الأعضاء في الرسائل');

@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const Guild = require('../../models/Guild');
 const config = require('../../config');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88verify')
+        .setName('08verify')
         .setDescription('إعداد نظام التوثيق (للإدارة فقط)')
         .addSubcommand(sub => 
             sub.setName('setup')
@@ -19,7 +19,7 @@ module.exports = {
                 .setTitle(`${config.emojis?.verify || '✔️'} توثيق الحساب`)
                 .setDescription('اضغط على الزر أدناه للحصول على رتبة **عضو موثق** والوصول إلى باقي رومات السيرفر.')
                 .setColor(config.colors?.primary || '#FFD700')
-                .setFooter({ text: 'سيرفر 88' });
+                .setFooter({ text: 'سيرفر 08' });
 
             const row = new ActionRowBuilder()
                 .addComponents(

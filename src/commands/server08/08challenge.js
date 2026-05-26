@@ -1,8 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88challenge')
+        .setName('08challenge')
         .setDescription('تحدي فريق آخر في السيرفر')
         .addStringOption(opt => opt.setName('team').setDescription('اسم الفريق المراد تحديه').setRequired(true))
         .addStringOption(opt => opt.setName('game').setDescription('اللعبة أو نوع التحدي').setRequired(true)),
@@ -17,7 +17,7 @@ module.exports = {
                 { name: '🎮 اللعبة / التحدي', value: game }
             )
             .setColor('#FFD700')
-            .setFooter({ text: 'سيرفر 88 - التحديات' });
+            .setFooter({ text: 'سيرفر 08 - التحديات' });
 
         await interaction.reply({ embeds: [embed] });
     },

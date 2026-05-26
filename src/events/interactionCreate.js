@@ -75,7 +75,7 @@ module.exports = {
             // معالجة زر التحقق (Verify)
             else if (interaction.customId === 'verify_button') {
                 try {
-                    const verifyHandler = require('../commands/server88/88verify.js');
+                    const verifyHandler = require('../commands/server08/08verify.js');
                     if (verifyHandler && verifyHandler.handleButton) {
                         await verifyHandler.handleButton(interaction);
                     }

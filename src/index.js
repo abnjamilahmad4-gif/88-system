@@ -32,7 +32,7 @@ process.on('uncaughtException', (err, origin) => {
 // دالة التشغيل الأساسية
 const init = async () => {
     try {
-        console.log('[System] Starting 88Bot initialization...');
+        console.log('[System] Starting 08Bot initialization...');
         
         // الاتصال بقاعدة البيانات
         await connectDatabase();

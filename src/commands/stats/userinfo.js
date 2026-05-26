@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,7 +20,7 @@ module.exports = {
                 { name: '📅 تاريخ الانضمام للديسكورد', value: `<t:${parseInt(user.createdTimestamp / 1000)}:f>\n(<t:${parseInt(user.createdTimestamp / 1000)}:R>)`, inline: false },
                 { name: '📥 تاريخ الانضمام للسيرفر', value: `<t:${parseInt(member.joinedTimestamp / 1000)}:f>\n(<t:${parseInt(member.joinedTimestamp / 1000)}:R>)`, inline: false }
             )
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed] });

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
                 { name: '💎 عدد البوستات', value: `${guild.premiumSubscriptionCount || 0} بوست`, inline: true }
             )
             .setThumbnail('https://i.imgur.com/vHq4R72.png') // أيقونة بوست للديسكورد (اختياري)
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
         
         await interaction.reply({ embeds: [embed] });

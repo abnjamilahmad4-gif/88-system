@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const XP = require('../../models/XP');
 const config = require('../../config');
 
@@ -29,7 +29,7 @@ module.exports = {
             .setColor(config.colors?.primary || '#FFD700')
             .setDescription(description)
             .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-            .setFooter({ text: `سيرفر 88 — أعلى ${allUsers.length} أعضاء` })
+            .setFooter({ text: `سيرفر 08 — أعلى ${allUsers.length} أعضاء` })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed] });

@@ -1,12 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 // للتوضيح فقط (يجب استخدام قاعدة بيانات حقيقية للحفظ)
 const events = [];
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88event')
-        .setDescription('إدارة فعاليات سيرفر 88')
+        .setName('08event')
+        .setDescription('إدارة فعاليات سيرفر 08')
         .addSubcommand(sub => 
             sub.setName('create')
                 .setDescription('إنشاء فعالية جديدة')

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(isEnabled ? '#00FF00' : '#FF0000')
             .setDescription(`✅ | تم ${isEnabled ? '**تفعيل**' : '**إيقاف**'} ميزة الحصول على نقاط XP أثناء التواجد في القنوات الصوتية.`)
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
             
         await interaction.reply({ embeds: [embed], ephemeral: true });

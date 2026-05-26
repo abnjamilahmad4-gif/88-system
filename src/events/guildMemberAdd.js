@@ -1,4 +1,4 @@
-const { Events, EmbedBuilder } = require('discord.js');
+﻿const { Events, EmbedBuilder } = require('discord.js');
 const Guild = require('../models/Guild');
 const { COLORS } = require('../utils/embeds');
 const config = require('../config');
@@ -16,7 +16,7 @@ module.exports = {
                 if (welcomeChannel) {
                     const embed = new EmbedBuilder()
                         .setTitle(`${config.emojis?.star || '⭐'} عضو جديد!`)
-                        .setDescription(`أهلاً وسهلاً بك ${member} في سيرفر **88**!\nنحن سعداء بانضمامك إلينا. ${config.emojis?.gift || '🎁'}`)
+                        .setDescription(`أهلاً وسهلاً بك ${member} في سيرفر **08**!\nنحن سعداء بانضمامك إلينا. ${config.emojis?.gift || '🎁'}`)
                         .setColor(COLORS.GOLD)
                         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
                         .setFooter({ text: `أنت العضو رقم ${member.guild.memberCount}` })

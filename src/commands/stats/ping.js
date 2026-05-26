@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
                 { name: '🤖 سرعة استجابة البوت', value: `${ping}ms`, inline: true },
                 { name: '🌐 سرعة اتصال الـ API', value: `${interaction.client.ws.ping}ms`, inline: true }
             )
-            .setFooter({ text: 'سيرفر 88' })
+            .setFooter({ text: 'سيرفر 08' })
             .setTimestamp();
         
         await interaction.editReply({ embeds: [embed] });

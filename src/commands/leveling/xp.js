@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const XP = require('../../models/XP');
 const config = require('../../config');
 
@@ -37,7 +37,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(config.colors?.primary || '#FFD700')
             .setTimestamp()
-            .setFooter({ text: 'سيرفر 88 — نظام الإدارة' });
+            .setFooter({ text: 'سيرفر 08 — نظام الإدارة' });
 
         if (subcommand === 'add') {
             const amount = interaction.options.getInteger('amount');

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ChannelSelectMenuBuilder, RoleSelectMenuBuilder, EmbedBuilder, ChannelType, ComponentType } = require('discord.js');
+﻿const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ChannelSelectMenuBuilder, RoleSelectMenuBuilder, EmbedBuilder, ChannelType, ComponentType } = require('discord.js');
 const Guild = require('../../models/Guild');
 const { COLORS } = require('../../utils/embeds');
 
@@ -136,7 +136,7 @@ module.exports = {
 // إرسال لوحة الإعداد
 async function sendSetupPanel(interaction, guildData, statusMessage = null) {
     const embed = new EmbedBuilder()
-        .setTitle('⚙️ لوحة إعداد بوت 88')
+        .setTitle('⚙️ لوحة إعداد بوت 08')
         .setColor(COLORS.GOLD)
         .setDescription(
             '**مرحباً بك في نظام الإعداد!**\n' +

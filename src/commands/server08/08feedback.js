@@ -1,13 +1,13 @@
-const { SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+﻿const { SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('88feedback')
-        .setDescription('إرسال تقييم أو رأي عن سيرفر 88'),
+        .setName('08feedback')
+        .setDescription('إرسال تقييم أو رأي عن سيرفر 08'),
     async execute(interaction) {
         const modal = new ModalBuilder()
             .setCustomId('feedback_modal')
-            .setTitle('تقييم سيرفر 88');
+            .setTitle('تقييم سيرفر 08');
 
         const feedbackInput = new TextInputBuilder()
             .setCustomId('feedback_input')

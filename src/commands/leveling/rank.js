@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const XP = require('../../models/XP');
 const config = require('../../config');
 
@@ -46,7 +46,7 @@ module.exports = {
                 { name: `${config.emojis?.voice || '🎤'} دقائق الصوت`, value: `${userXP.voiceMinutes || 0}`, inline: true },
                 { name: '📈 التقدم', value: `\`${progressBar}\` ${percentage}%` }
             )
-            .setFooter({ text: 'سيرفر 88 — نظام المستويات', iconURL: interaction.guild.iconURL() })
+            .setFooter({ text: 'سيرفر 08 — نظام المستويات', iconURL: interaction.guild.iconURL() })
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed] });
