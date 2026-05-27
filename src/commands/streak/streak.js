@@ -40,6 +40,7 @@ module.exports = {
 
             const currentStreak = streakData?.currentStreak || 0;
             const maxStreak = streakData?.maxStreak || 0;
+            const totalPhotos = streakData?.totalPhotos || 0;
             const lastDate = streakData?.lastStreakDate ? `<t:${Math.floor(streakData.lastStreakDate.getTime() / 1000)}:R>` : 'لم يسجل بعد';
 
             const embed = new EmbedBuilder()
@@ -49,30 +50,49 @@ module.exports = {
                 .addFields(
                     { name: '🔥 الستريك الحالي', value: `**${currentStreak}** يوم`, inline: true },
                     { name: '⭐ أعلى ستريك', value: `**${maxStreak}** يوم`, inline: true },
-                    { name: '📅 آخر تسجيل', value: lastDate, inline: true }
+                    { name: '📸 إجمالي الصور المرسلة', value: `**${totalPhotos}** صورة`, inline: true },
+                    { name: '📅 آخر تسجيل', value: lastDate, inline: false }
                 )
                 .setTimestamp();
 
             await interaction.reply({ embeds: [embed] });
 
         } else if (subcommand === 'check') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            // الحصول على منتصف الليل بتوقيت مكة (Riyadh - UTC+3)
+            const getRiyadhMidnight = (date = new Date()) => {
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'Asia/Riyadh',
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                });
+                const parts = formatter.formatToParts(date);
+                const dateObj = {};
+                parts.forEach(p => dateObj[p.type] = p.value);
+                
+                const riyadhMidnight = new Date(Date.UTC(dateObj.year, dateObj.month - 1, dateObj.day, 0, 0, 0));
+                const utcTime = riyadhMidnight.getTime() - (3 * 60 * 60 * 1000);
+                return new Date(utcTime);
+            };
+
+            const todayRiyadh = getRiyadhMidnight(new Date());
 
             const activeToday = await Streak.find({
                 guildId: interaction.guild.id,
-                lastStreakDate: { $gte: today }
+                lastStreakDate: { $gte: todayRiyadh }
             });
 
+            const totalPhotosToday = activeToday.reduce((sum, s) => sum + (s.todayPhotos || 0), 0);
+
             const embed = new EmbedBuilder()
-                .setTitle(`${config.emojis?.chart || '📈'} نشاط اليوم`)
+                .setTitle(`${config.emojis?.chart || '📈'} نشاط اليوم في الستريك`)
                 .setColor(config.colors?.primary || '#FFD700')
                 .setDescription(
                     activeToday.length > 0
-                        ? activeToday.map((s, i) => `**${i + 1}.** <@${s.userId}> — ${config.emojis?.streak || '🔥'} ${s.currentStreak} يوم`).join('\n')
+                        ? activeToday.map((s, i) => `**${i + 1}.** <@${s.userId}> — ${config.emojis?.streak || '🔥'} ${s.currentStreak} يوم (📸 **${s.todayPhotos || 0}** صور اليوم)`).join('\n')
                         : 'لا أحد سجل ستريك اليوم بعد!'
                 )
-                .setFooter({ text: `${activeToday.length} عضو نشط اليوم` })
+                .setFooter({ text: `👥 الأعضاء النشطين: ${activeToday.length} | 📸 صور اليوم: ${totalPhotosToday}` })
                 .setTimestamp();
 
             await interaction.reply({ embeds: [embed] });
@@ -91,7 +111,7 @@ module.exports = {
             for (let i = 0; i < topStreaks.length; i++) {
                 const s = topStreaks[i];
                 const medal = medals[i] || `**${i + 1}.**`;
-                description += `${medal} <@${s.userId}> — ${config.emojis?.streak || '🔥'} **${s.currentStreak}** يوم (أعلى: ${s.maxStreak})\n`;
+                description += `${medal} <@${s.userId}> — ${config.emojis?.streak || '🔥'} **${s.currentStreak}** يوم (أعلى: ${s.maxStreak} | 📸 ${s.totalPhotos || 0} صورة)\n`;
             }
 
             const embed = new EmbedBuilder()
@@ -109,10 +129,10 @@ module.exports = {
             const targetUser = interaction.options.getUser('user');
             await Streak.findOneAndUpdate(
                 { guildId: interaction.guild.id, userId: targetUser.id },
-                { currentStreak: 0 },
+                { currentStreak: 0, todayPhotos: 0 },
                 { upsert: true }
             );
-            await interaction.reply({ content: `🔄 تم تصفير الستريك الخاص بـ ${targetUser} بنجاح.` });
+            await interaction.reply({ content: `🔄 تم تصفير الستريك وصور اليوم الخاصة بـ ${targetUser} بنجاح.` });
         }
     },
 };

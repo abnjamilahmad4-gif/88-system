@@ -116,9 +116,12 @@ module.exports = {
                         .setTimestamp();
 
                     // إرسال التقييم إلى قناة اللوج
-                    const guildData = await Guild.findOne({ guildId: interaction.guild.id });
-                    if (guildData && guildData.log_channel) {
-                        const logChannel = interaction.guild.channels.cache.get(guildData.log_channel);
+                    const guildData = await Guild.findOne({ guildId: interaction.guildId });
+                    if (guildData && guildData.log_channel && interaction.guild) {
+                        let logChannel = interaction.guild.channels.cache.get(guildData.log_channel);
+                        if (!logChannel) {
+                            logChannel = await interaction.guild.channels.fetch(guildData.log_channel).catch(() => null);
+                        }
                         if (logChannel) {
                             await logChannel.send({ embeds: [feedbackEmbed] });
                         }

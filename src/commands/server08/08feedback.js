@@ -1,9 +1,10 @@
-﻿const { SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('08feedback')
-        .setDescription('إرسال تقييم أو رأي عن سيرفر 08'),
+        .setDescription('إرسال تقييم أو رأي عن سيرفر 08')
+        .setDMPermission(false),
     async execute(interaction) {
         const modal = new ModalBuilder()
             .setCustomId('feedback_modal')

@@ -66,66 +66,90 @@ module.exports = {
         }
 
         // 2. نظام الـ XP (النقاط والمستويات)
+        let giveXP = true;
         const cooldownKey = `${message.guild.id}-${authorId}`;
         const xpCooldownTime = config.xp?.cooldown || 60000;
 
         if (xpCooldown.has(cooldownKey)) {
             const lastXpTime = xpCooldown.get(cooldownKey);
-            if (now - lastXpTime < xpCooldownTime) return;
+            if (now - lastXpTime < xpCooldownTime) {
+                giveXP = false;
+            }
         }
 
-        xpCooldown.set(cooldownKey, now);
+        if (giveXP) {
+            xpCooldown.set(cooldownKey, now);
 
-        // إعطاء نقاط عشوائية
-        const minXp = config.xp?.minPerMessage || 15;
-        const maxXp = config.xp?.maxPerMessage || 25;
-        const xpToAdd = Math.floor(Math.random() * (maxXp - minXp + 1)) + minXp;
-        
-        try {
-            let userXP = await XP.findOne({ guildId: message.guild.id, userId: authorId });
-            if (!userXP) {
-                userXP = new XP({
-                    guildId: message.guild.id,
-                    userId: authorId,
-                    xp: 0,
-                    level: 0,
-                    messages: 0,
-                    voiceMinutes: 0,
-                });
+            // إعطاء نقاط عشوائية
+            const minXp = config.xp?.minPerMessage || 15;
+            const maxXp = config.xp?.maxPerMessage || 25;
+            const xpToAdd = Math.floor(Math.random() * (maxXp - minXp + 1)) + minXp;
+            
+            try {
+                let userXP = await XP.findOne({ guildId: message.guild.id, userId: authorId });
+                if (!userXP) {
+                    userXP = new XP({
+                        guildId: message.guild.id,
+                        userId: authorId,
+                        xp: 0,
+                        level: 0,
+                        messages: 0,
+                        voiceMinutes: 0,
+                    });
+                }
+
+                userXP.xp += xpToAdd;
+                userXP.messages += 1;
+                userXP.lastMessage = new Date();
+
+                const multiplier = config.xp?.levelUpMultiplier || 100;
+                const nextLevelXp = (userXP.level + 1) * multiplier;
+
+                if (userXP.xp >= nextLevelXp) {
+                    userXP.level += 1;
+                    userXP.xp -= nextLevelXp;
+
+                    const levelUpMsg = `🎉 مبروك ${message.author}، لقد وصلت إلى المستوى **${userXP.level}**! ${config.emojis?.xp || '✨'}`;
+                    message.channel.send(levelUpMsg).catch(() => {});
+                }
+                await userXP.save();
+            } catch (error) {
+                console.error('خطأ في نظام الـ XP:', error);
             }
-
-            userXP.xp += xpToAdd;
-            userXP.messages += 1;
-            userXP.lastMessage = new Date();
-
-            const multiplier = config.xp?.levelUpMultiplier || 100;
-            const nextLevelXp = (userXP.level + 1) * multiplier;
-
-            if (userXP.xp >= nextLevelXp) {
-                userXP.level += 1;
-                userXP.xp -= nextLevelXp;
-
-                const levelUpMsg = `🎉 مبروك ${message.author}، لقد وصلت إلى المستوى **${userXP.level}**! ${config.emojis?.xp || '✨'}`;
-                message.channel.send(levelUpMsg).catch(() => {});
-            }
-            await userXP.save();
-        } catch (error) {
-            console.error('خطأ في نظام الـ XP:', error);
         }
 
-        // 3. نظام الستريك اليومي (Streak) — يعمل فقط في قناة الستريك المحددة
+        // 3. نظام الستريك اليومي (Streak) — يعمل فقط في قناة الستريك المحددة عند إرسال صور
         try {
             if (settings.streak_channel && message.channel.id === settings.streak_channel) {
-                // التحقق من أن الرسالة تحتوي على محتوى أو صورة/مرفق
-                const hasContent = message.content.length > 0;
-                const hasAttachment = message.attachments.size > 0;
+                // التحقق من وجود صور في الرسالة
+                const imageAttachments = message.attachments.filter(attachment => 
+                    attachment.contentType && attachment.contentType.startsWith('image/')
+                );
+                const hasImageLink = /\.(jpg|jpeg|png|gif|webp)/i.test(message.content) || 
+                                     message.content.includes('tenor.com') || 
+                                     message.content.includes('giphy.com');
+                const photoCount = imageAttachments.size + (hasImageLink ? 1 : 0);
 
-                if (hasContent || hasAttachment) {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
+                if (photoCount > 0) {
+                    // دالة للحصول على منتصف الليل بتوقيت مكة (Saudi Arabia/Riyadh - UTC+3)
+                    const getRiyadhMidnight = (date = new Date()) => {
+                        const formatter = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'Asia/Riyadh',
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric'
+                        });
+                        const parts = formatter.formatToParts(date);
+                        const dateObj = {};
+                        parts.forEach(p => dateObj[p.type] = p.value);
+                        
+                        const riyadhMidnight = new Date(Date.UTC(dateObj.year, dateObj.month - 1, dateObj.day, 0, 0, 0));
+                        const utcTime = riyadhMidnight.getTime() - (3 * 60 * 60 * 1000);
+                        return new Date(utcTime);
+                    };
 
-                    const yesterday = new Date(today);
-                    yesterday.setDate(yesterday.getDate() - 1);
+                    const todayRiyadh = getRiyadhMidnight(new Date());
+                    const yesterdayRiyadh = new Date(todayRiyadh.getTime() - 24 * 60 * 60 * 1000);
 
                     let streakData = await Streak.findOne({ guildId: message.guild.id, userId: authorId });
 
@@ -136,46 +160,54 @@ module.exports = {
                             userId: authorId,
                             currentStreak: 1,
                             maxStreak: 1,
-                            lastStreakDate: new Date()
+                            lastStreakDate: new Date(),
+                            totalPhotos: photoCount,
+                            todayPhotos: photoCount
                         });
                         await streakData.save();
 
                         // رسالة ترحيب بالستريك الأول
-                        message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 — استمر!`).catch(() => {});
+                        message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 — استمر! (📸 أرسل ${photoCount} صورة)`).catch(() => {});
                     } else {
                         const lastDate = streakData.lastStreakDate ? new Date(streakData.lastStreakDate) : null;
 
                         if (lastDate) {
-                            lastDate.setHours(0, 0, 0, 0);
+                            const lastDateRiyadh = getRiyadhMidnight(lastDate);
 
-                            // إذا سجل اليوم مسبقاً، لا نحسبه مرتين
-                            if (lastDate.getTime() === today.getTime()) {
-                                // لا نعمل شيء، العضو سجل اليوم بالفعل
+                            // إذا سجل اليوم مسبقاً، لا نزيد الستريك ولكن نزيد عدد الصور اليومية والإجمالية
+                            if (lastDateRiyadh.getTime() === todayRiyadh.getTime()) {
+                                streakData.totalPhotos += photoCount;
+                                streakData.todayPhotos += photoCount;
+                                await streakData.save();
+                                // لا نرسل رسالة ستريك جديدة لتجنب التكرار المزعج ولكن حدثنا الصور
                             }
-                            // إذا سجل بالأمس، يستمر الستريك
-                            else if (lastDate.getTime() === yesterday.getTime()) {
+                            // إذا سجل بالأمس، يستمر الستريك ونزيد الصور ونحدث اليومية
+                            else if (lastDateRiyadh.getTime() === yesterdayRiyadh.getTime()) {
                                 streakData.currentStreak += 1;
                                 if (streakData.currentStreak > streakData.maxStreak) {
                                     streakData.maxStreak = streakData.currentStreak;
                                 }
                                 streakData.lastStreakDate = new Date();
+                                streakData.totalPhotos += photoCount;
+                                streakData.todayPhotos = photoCount; // إعادة تعيين لليوم الجديد
                                 await streakData.save();
 
-                                // إشعار بالاستمرار
                                 const streakEmoji = streakData.currentStreak >= 7 ? '🏆' : '🔥';
-                                message.channel.send(`${streakEmoji} ${message.author} واصل الستريك! **${streakData.currentStreak}** يوم متتالي!`).catch(() => {});
+                                message.channel.send(`${streakEmoji} ${message.author} واصل الستريك! **${streakData.currentStreak}** يوم متتالي! (📸 أرسل اليوم ${photoCount} صورة)`).catch(() => {});
                             }
                             // إذا فات أكثر من يوم، ينقطع الستريك ويبدأ من جديد
                             else {
                                 const oldStreak = streakData.currentStreak;
                                 streakData.currentStreak = 1;
                                 streakData.lastStreakDate = new Date();
+                                streakData.totalPhotos += photoCount;
+                                streakData.todayPhotos = photoCount;
                                 await streakData.save();
 
                                 if (oldStreak > 1) {
-                                    message.channel.send(`😢 ${message.author} انقطع الستريك عند **${oldStreak}** يوم! بداية جديدة — يوم 1`).catch(() => {});
+                                    message.channel.send(`😢 ${message.author} انقطع الستريك عند **${oldStreak}** يوم! بداية جديدة — يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
                                 } else {
-                                    message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1`).catch(() => {});
+                                    message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
                                 }
                             }
                         } else {
@@ -183,8 +215,10 @@ module.exports = {
                             streakData.currentStreak = 1;
                             streakData.maxStreak = Math.max(streakData.maxStreak, 1);
                             streakData.lastStreakDate = new Date();
+                            streakData.totalPhotos += photoCount;
+                            streakData.todayPhotos = photoCount;
                             await streakData.save();
-                            message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1`).catch(() => {});
+                            message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
                         }
                     }
                 }
