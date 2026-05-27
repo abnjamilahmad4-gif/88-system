@@ -97,5 +97,44 @@ module.exports = {
                 }
             }
         }
+        // 4. التعامل مع الـ Modals (النوافذ المنبثقة)
+        else if (interaction.isModalSubmit()) {
+            if (interaction.customId === 'feedback_modal') {
+                try {
+                    const feedbackText = interaction.fields.getTextInputValue('feedback_input');
+                    
+                    const { EmbedBuilder } = require('discord.js');
+                    const feedbackEmbed = new EmbedBuilder()
+                        .setTitle('📝 تقييم جديد')
+                        .setColor(config.colors?.primary || '#FFD700')
+                        .addFields(
+                            { name: '👤 المُقيّم', value: `${interaction.user} (${interaction.user.tag})`, inline: true },
+                            { name: '📅 التاريخ', value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: true },
+                            { name: '💬 التقييم', value: feedbackText }
+                        )
+                        .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+                        .setTimestamp();
+
+                    // إرسال التقييم إلى قناة اللوج
+                    const guildData = await Guild.findOne({ guildId: interaction.guild.id });
+                    if (guildData && guildData.log_channel) {
+                        const logChannel = interaction.guild.channels.cache.get(guildData.log_channel);
+                        if (logChannel) {
+                            await logChannel.send({ embeds: [feedbackEmbed] });
+                        }
+                    }
+
+                    await interaction.reply({
+                        content: '✅ شكراً لك! تم إرسال تقييمك بنجاح إلى الإدارة.',
+                        ephemeral: true
+                    });
+                } catch (err) {
+                    console.error('خطأ في معالجة التقييم:', err);
+                    if (!interaction.replied) {
+                        await interaction.reply({ content: '❌ حدث خطأ أثناء إرسال التقييم.', ephemeral: true });
+                    }
+                }
+            }
+        }
     },
 };

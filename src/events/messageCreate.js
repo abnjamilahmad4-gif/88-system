@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const Guild = require('../models/Guild');
 const XP = require('../models/XP');
+const Streak = require('../models/Streak');
 const config = require('../config');
 
 // ماب لتخزين عدد رسائل الأعضاء لمكافحة السبام المؤقت
@@ -110,6 +111,86 @@ module.exports = {
             await userXP.save();
         } catch (error) {
             console.error('خطأ في نظام الـ XP:', error);
+        }
+
+        // 3. نظام الستريك اليومي (Streak) — يعمل فقط في قناة الستريك المحددة
+        try {
+            if (settings.streak_channel && message.channel.id === settings.streak_channel) {
+                // التحقق من أن الرسالة تحتوي على محتوى أو صورة/مرفق
+                const hasContent = message.content.length > 0;
+                const hasAttachment = message.attachments.size > 0;
+
+                if (hasContent || hasAttachment) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+
+                    let streakData = await Streak.findOne({ guildId: message.guild.id, userId: authorId });
+
+                    if (!streakData) {
+                        // أول مرة يسجل ستريك
+                        streakData = new Streak({
+                            guildId: message.guild.id,
+                            userId: authorId,
+                            currentStreak: 1,
+                            maxStreak: 1,
+                            lastStreakDate: new Date()
+                        });
+                        await streakData.save();
+
+                        // رسالة ترحيب بالستريك الأول
+                        message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 — استمر!`).catch(() => {});
+                    } else {
+                        const lastDate = streakData.lastStreakDate ? new Date(streakData.lastStreakDate) : null;
+
+                        if (lastDate) {
+                            lastDate.setHours(0, 0, 0, 0);
+
+                            // إذا سجل اليوم مسبقاً، لا نحسبه مرتين
+                            if (lastDate.getTime() === today.getTime()) {
+                                // لا نعمل شيء، العضو سجل اليوم بالفعل
+                            }
+                            // إذا سجل بالأمس، يستمر الستريك
+                            else if (lastDate.getTime() === yesterday.getTime()) {
+                                streakData.currentStreak += 1;
+                                if (streakData.currentStreak > streakData.maxStreak) {
+                                    streakData.maxStreak = streakData.currentStreak;
+                                }
+                                streakData.lastStreakDate = new Date();
+                                await streakData.save();
+
+                                // إشعار بالاستمرار
+                                const streakEmoji = streakData.currentStreak >= 7 ? '🏆' : '🔥';
+                                message.channel.send(`${streakEmoji} ${message.author} واصل الستريك! **${streakData.currentStreak}** يوم متتالي!`).catch(() => {});
+                            }
+                            // إذا فات أكثر من يوم، ينقطع الستريك ويبدأ من جديد
+                            else {
+                                const oldStreak = streakData.currentStreak;
+                                streakData.currentStreak = 1;
+                                streakData.lastStreakDate = new Date();
+                                await streakData.save();
+
+                                if (oldStreak > 1) {
+                                    message.channel.send(`😢 ${message.author} انقطع الستريك عند **${oldStreak}** يوم! بداية جديدة — يوم 1`).catch(() => {});
+                                } else {
+                                    message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1`).catch(() => {});
+                                }
+                            }
+                        } else {
+                            // لم يكن لديه تاريخ سابق
+                            streakData.currentStreak = 1;
+                            streakData.maxStreak = Math.max(streakData.maxStreak, 1);
+                            streakData.lastStreakDate = new Date();
+                            await streakData.save();
+                            message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1`).catch(() => {});
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('خطأ في نظام الستريك:', error);
         }
     },
 };
