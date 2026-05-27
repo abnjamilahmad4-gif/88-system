@@ -39,10 +39,13 @@ module.exports = {
         }
 
         try {
-            // 1. البحث عن أو إنشاء فئة (Category) باسم "08 channels"
+            // 1. البحث عن فئة (Category) باسم "08 channels"
             let category = interaction.guild.channels.cache.find(c => 
                 c.name === '08 channels' && c.type === ChannelType.GuildCategory
             );
+            
+            const categoryExists = !!category;
+
             if (!category) {
                 category = await interaction.guild.channels.create({
                     name: '08 channels',
@@ -54,50 +57,55 @@ module.exports = {
             // تحديث فئة البلاغات في الموديل
             guildData.report_category = category.id;
 
-            // 2. مصفوفة القنوات المراد إنشاؤها تلقائياً وربطها بالـ setup
-            const channelsToCreate = [
-                { name: 'ticket-🎫', field: 'ticket_channel' },
-                { name: 'avrages-📊', field: 'log_channel' },
-                { name: 'streaks-☄️', field: 'streak_channel' },
-                { name: 'ticket-replay-🔄', field: 't_orders_channel' },
-                { name: 'verification-🔐', field: 'verify_channel' },
-                { name: 'WELCOME-08-👋', field: 'welcome_channel' },
-                { name: 'cmd-👨‍💻', field: null }, // قناة الأوامر العامة ليست بالـ setup
-                { name: 'levels-🏅', field: 'level_channel' }
-            ];
+            if (!categoryExists) {
+                // 2. مصفوفة القنوات المراد إنشاؤها تلقائياً وربطها بالـ setup
+                const channelsToCreate = [
+                    { name: 'ticket-🎫', field: 'ticket_channel' },
+                    { name: 'avrages-📊', field: 'log_channel' },
+                    { name: 'streaks-☄️', field: 'streak_channel' },
+                    { name: 'ticket-replay-🔄', field: 't_orders_channel' },
+                    { name: 'verification-🔐', field: 'verify_channel' },
+                    { name: 'WELCOME-08-👋', field: 'welcome_channel' },
+                    { name: 'cmd-👨‍💻', field: null }, // قناة الأوامر العامة ليست بالـ setup
+                    { name: 'levels-🏅', field: 'level_channel' }
+                ];
 
-            for (const ch of channelsToCreate) {
-                let channel = interaction.guild.channels.cache.find(c => 
-                    c.name === ch.name && c.type === ChannelType.GuildText
-                );
+                for (const ch of channelsToCreate) {
+                    let channel = interaction.guild.channels.cache.find(c => 
+                        c.name === ch.name && c.type === ChannelType.GuildText
+                    );
 
-                if (channel) {
-                    // إذا كانت القناة موجودة ولكن خارج الفئة، نقوم بنقلها إليها
-                    if (channel.parentId !== category.id) {
-                        try {
-                            await channel.setParent(category.id);
-                        } catch (error) {
-                            console.error(`خطأ أثناء نقل القناة ${ch.name} إلى الفئة:`, error);
+                    if (channel) {
+                        // إذا كانت القناة موجودة ولكن خارج الفئة، نقوم بنقلها إليها
+                        if (channel.parentId !== category.id) {
+                            try {
+                                await channel.setParent(category.id);
+                            } catch (error) {
+                                console.error(`خطأ أثناء نقل القناة ${ch.name} إلى الفئة:`, error);
+                            }
                         }
+                    } else {
+                        // إذا لم تكن القناة موجودة، نقوم بإنشائها داخل الفئة
+                        channel = await interaction.guild.channels.create({
+                            name: ch.name,
+                            type: ChannelType.GuildText,
+                            parent: category.id,
+                            reason: `إنشاء القناة التلقائية ${ch.name}`
+                        });
                     }
-                } else {
-                    // إذا لم تكن القناة موجودة، نقوم بإنشائها داخل الفئة
-                    channel = await interaction.guild.channels.create({
-                        name: ch.name,
-                        type: ChannelType.GuildText,
-                        parent: category.id,
-                        reason: `إنشاء القناة التلقائية ${ch.name}`
-                    });
+
+                    // ربط القناة بالحقل المناسب في إعدادات البوت تلقائياً
+                    if (ch.field) {
+                        guildData[ch.field] = channel.id;
+                    }
                 }
 
-                // ربط القناة بالحقل المناسب في إعدادات البوت تلقائياً
-                if (ch.field) {
-                    guildData[ch.field] = channel.id;
-                }
+                await guildData.save();
+                await sendSetupPanel(interaction, guildData, '✨ تم إنشاء فئة "08 channels" وجميع القنوات الأساسية تلقائياً وربطها بالـ Setup بنجاح!');
+            } else {
+                await guildData.save();
+                await sendSetupPanel(interaction, guildData, 'ℹ️ فئة "08 channels" موجودة مسبقاً، لم يتم إنشاء أو تعديل أي قنوات تلقائياً.');
             }
-
-            await guildData.save();
-            await sendSetupPanel(interaction, guildData, '✨ تم إعداد وإنشاء فئة "08 channels" وجميع القنوات الأساسية تلقائياً وربطها بالـ Setup بنجاح!');
         } catch (error) {
             console.error('خطأ في إعداد القنوات التلقائي:', error);
             await sendSetupPanel(interaction, guildData, '⚠️ حدث خطأ أثناء محاولة إنشاء بعض القنوات التلقائية، يمكنك ضبط القنوات المتبقية يدوياً.');
