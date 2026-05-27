@@ -110,7 +110,13 @@ module.exports = {
                     userXP.xp -= nextLevelXp;
 
                     const levelUpMsg = `🎉 مبروك ${message.author}، لقد وصلت إلى المستوى **${userXP.level}**! ${config.emojis?.xp || '✨'}`;
-                    message.channel.send(levelUpMsg).catch(() => {});
+                    
+                    if (settings.level_channel) {
+                        const levelChannel = message.guild.channels.cache.get(settings.level_channel);
+                        if (levelChannel) {
+                            levelChannel.send(levelUpMsg).catch(() => {});
+                        }
+                    }
                 }
                 await userXP.save();
             } catch (error) {

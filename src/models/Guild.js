@@ -14,6 +14,7 @@ const guildSchema = new Schema({
     report_category: { type: String, default: null },
     verify_channel: { type: String, default: null },
     welcome_channel: { type: String, default: null },
+    level_channel: { type: String, default: null },
     isSetup: { type: Boolean, default: false }
 });
 

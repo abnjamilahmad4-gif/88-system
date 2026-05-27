@@ -1,4 +1,4 @@
-﻿const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ChannelSelectMenuBuilder, RoleSelectMenuBuilder, EmbedBuilder, ChannelType, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ChannelSelectMenuBuilder, RoleSelectMenuBuilder, EmbedBuilder, ChannelType, ComponentType } = require('discord.js');
 const Guild = require('../../models/Guild');
 const { COLORS } = require('../../utils/embeds');
 
@@ -15,6 +15,7 @@ const SETUP_FIELDS = {
     'report_category': { label: 'تصنيف البلاغات', emoji: '🚨', type: 'channel' },
     'verify_channel': { label: 'قناة التحقق', emoji: '✔️', type: 'channel' },
     'welcome_channel': { label: 'قناة الترحيب', emoji: '👋', type: 'channel' },
+    'level_channel': { label: 'قناة المستويات', emoji: '📊', type: 'channel' },
 };
 
 module.exports = {
@@ -140,12 +141,12 @@ async function sendSetupPanel(interaction, guildData, statusMessage = null) {
         .setColor(COLORS.GOLD)
         .setDescription(
             '**مرحباً بك في نظام الإعداد!**\n' +
-            'يجب إكمال جميع الإعدادات الـ 11 لتفعيل البوت.\n' +
+            'يجب إكمال جميع الإعدادات الـ 12 لتفعيل البوت.\n' +
             'اختر الإعداد من القائمة أدناه.\n\n' +
             (statusMessage ? `> ${statusMessage}\n\n` : '') +
             getStatusText(guildData)
         )
-        .setFooter({ text: `${getCompletedCount(guildData)}/11 مكتمل` })
+        .setFooter({ text: `${getCompletedCount(guildData)}/12 مكتمل` })
         .setTimestamp();
 
     const options = Object.entries(SETUP_FIELDS).map(([key, info]) => {
@@ -212,10 +213,10 @@ async function finishSetup(interaction) {
     const guildData = await Guild.findOne({ guildId: interaction.guild.id });
     const completed = getCompletedCount(guildData);
     
-    if (completed < 11) {
+    if (completed < 12) {
         const embed = new EmbedBuilder()
             .setTitle('❌ لا يمكن تفعيل البوت')
-            .setDescription(`يجب إكمال جميع الإعدادات الـ 11 أولاً.\nالمكتمل: **${completed}/11**\n\n${getStatusText(guildData)}`)
+            .setDescription(`يجب إكمال جميع الإعدادات الـ 12 أولاً.\nالمكتمل: **${completed}/12**\n\n${getStatusText(guildData)}`)
             .setColor('#FF4444');
 
         return interaction.update({ embeds: [embed], components: [] });
