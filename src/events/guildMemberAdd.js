@@ -1,4 +1,4 @@
-﻿const { Events, EmbedBuilder } = require('discord.js');
+const { Events, EmbedBuilder } = require('discord.js');
 const Guild = require('../models/Guild');
 const { COLORS } = require('../utils/embeds');
 const config = require('../config');
@@ -43,6 +43,20 @@ module.exports = {
                     
                     await logChannel.send({ embeds: [embed] }).catch(() => {});
                 }
+            }
+            // 3. إسناد رتبة غير الموثق "08." تلقائياً لتقييد وصوله الفوري للقنوات
+            let unverifiedRole = member.guild.roles.cache.find(r => r.name === '08.' || r.name === '08');
+            if (!unverifiedRole) {
+                // إذا لم تكن موجودة، نقوم بإنشائها أو البحث عنها
+                unverifiedRole = await member.guild.roles.create({
+                    name: '08.',
+                    color: '#555555',
+                    reason: 'رتبة غير الموثقين التلقائية لسيرفر 08'
+                }).catch(() => null);
+            }
+
+            if (unverifiedRole) {
+                await member.roles.add(unverifiedRole).catch(() => {});
             }
         } catch (error) {
             console.error('خطأ في حدث دخول العضو:', error);
