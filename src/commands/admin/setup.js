@@ -30,14 +30,68 @@ module.exports = {
             return interaction.reply({ content: '❌ هذا الأمر مخصص للإداريين فقط.', ephemeral: true });
         }
 
+        await interaction.deferReply({ ephemeral: true });
+
         // جلب أو إنشاء بيانات السيرفر
         let guildData = await Guild.findOne({ guildId: interaction.guild.id });
         if (!guildData) {
             guildData = new Guild({ guildId: interaction.guild.id });
-            await guildData.save();
         }
 
-        await sendSetupPanel(interaction, guildData);
+        try {
+            // 1. البحث عن أو إنشاء فئة (Category) باسم "08 channels"
+            let category = interaction.guild.channels.cache.find(c => 
+                c.name === '08 channels' && c.type === ChannelType.GuildCategory
+            );
+            if (!category) {
+                category = await interaction.guild.channels.create({
+                    name: '08 channels',
+                    type: ChannelType.GuildCategory,
+                    reason: 'الفئة التلقائية لقنوات سيرفر 08'
+                });
+            }
+
+            // تحديث فئة البلاغات في الموديل
+            guildData.report_category = category.id;
+
+            // 2. مصفوفة القنوات المراد إنشاؤها تلقائياً وربطها بالـ setup
+            const channelsToCreate = [
+                { name: 'ticket-🎫', field: 'ticket_channel' },
+                { name: 'avrages-📊', field: 'log_channel' },
+                { name: 'streaks-☄️', field: 'streak_channel' },
+                { name: 'ticket-replay-🔄', field: 't_orders_channel' },
+                { name: 'verification-🔐', field: 'verify_channel' },
+                { name: 'WELCOME-08-👋', field: 'welcome_channel' },
+                { name: 'cmd-👨‍💻', field: null }, // قناة الأوامر العامة ليست بالـ setup
+                { name: 'levels-🏅', field: 'level_channel' }
+            ];
+
+            for (const ch of channelsToCreate) {
+                let channel = interaction.guild.channels.cache.find(c => 
+                    c.name === ch.name && c.parentId === category.id && c.type === ChannelType.GuildText
+                );
+
+                if (!channel) {
+                    channel = await interaction.guild.channels.create({
+                        name: ch.name,
+                        type: ChannelType.GuildText,
+                        parent: category.id,
+                        reason: `إنشاء القناة التلقائية ${ch.name}`
+                    });
+                }
+
+                // ربط القناة بالحقل المناسب في إعدادات البوت تلقائياً
+                if (ch.field) {
+                    guildData[ch.field] = channel.id;
+                }
+            }
+
+            await guildData.save();
+            await sendSetupPanel(interaction, guildData, '✨ تم إعداد وإنشاء فئة "08 channels" وجميع القنوات الأساسية تلقائياً وربطها بالـ Setup بنجاح!');
+        } catch (error) {
+            console.error('خطأ في إعداد القنوات التلقائي:', error);
+            await sendSetupPanel(interaction, guildData, '⚠️ حدث خطأ أثناء محاولة إنشاء بعض القنوات التلقائية، يمكنك ضبط القنوات المتبقية يدوياً.');
+        }
     },
 
     // معالجة القائمة المنسدلة
