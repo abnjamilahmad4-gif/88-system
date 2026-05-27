@@ -27,32 +27,34 @@ module.exports = {
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === 'list') {
-            let legends = await Legend.find({ guildId: interaction.guild.id }).sort({ order: 1 });
+            // تحديث أو إنشاء الأساطير الافتراضية تلقائياً لضمان دقة البيانات والبيو المطلوب
+            const defaultLegends = [
+                {
+                    userId: '571240430637809674', // abdull / anas
+                    reason: 'انا المطور الاساسي بالسيرفر.',
+                    order: 1
+                },
+                {
+                    userId: '1375427370806284390', // zeno
+                    reason: 'مطور البوت والأنظمة البرمجية بالسيرفر.',
+                    order: 2
+                }
+            ];
 
-            // إذا كانت قاعدة البيانات فارغة، نقوم بالتهيئة التلقائية (Seeding) بالأساطير المطلوبة
-            if (legends.length === 0) {
-                const defaultLegends = [
-                    {
+            for (const def of defaultLegends) {
+                await Legend.findOneAndUpdate(
+                    { guildId: interaction.guild.id, userId: def.userId },
+                    { 
                         guildId: interaction.guild.id,
-                        userId: '571240430637809674', // abdull
-                        reason: 'ساهم في بناء السيرفر وتطويره.',
-                        order: 1
+                        userId: def.userId,
+                        reason: def.reason,
+                        order: def.order
                     },
-                    {
-                        guildId: interaction.guild.id,
-                        userId: '1375427370806284390', // zeno (تم تعديل المعرف إلى 18 رقماً صالحاً في ديسكورد)
-                        reason: 'أقدم داعم وأكثر الأعضاء تفاعلاً.',
-                        order: 2
-                    }
-                ];
-                
-                // تعديل المعرف إذا لزم الأمر للتأكد من أنه ديسكورد ID صالح
-                // المعرف zeno المعطى هو 1375427370806284390 (19 رقماً)
-                // في ديسكورد المعرفات تتكون من 17 إلى 19 رقماً وهي صالحة
-                
-                await Legend.insertMany(defaultLegends);
-                legends = await Legend.find({ guildId: interaction.guild.id }).sort({ order: 1 });
+                    { upsert: true, new: true }
+                );
             }
+
+            const legends = await Legend.find({ guildId: interaction.guild.id }).sort({ order: 1 });
 
             const embed = new EmbedBuilder()
                 .setTitle('🌟 أساطير السيرفر | Legends 🌟')
