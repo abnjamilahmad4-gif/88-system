@@ -1,4 +1,4 @@
-﻿const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
 const config = require('../../config');
 
 module.exports = {
@@ -150,7 +150,7 @@ module.exports = {
                         { name: '`/serverinfo`', value: 'عرض كافة تفاصيل السيرفر والتاريخ والمالك.' },
                         { name: '`/userinfo [user]`', value: 'عرض تفاصيل الحساب ورتب وتاريخ انضمام العضو.' },
                         { name: '`/botinfo`', value: 'استهلاك وتفاصيل البوت البرمجية وحالته.' },
-                        { name: '`/avatar /banner`', value: 'عرض وتحميل الصورة والبانر الشخصي للأعضاء.' },
+                        { name: '`/avatar /banner /profile`', value: 'عرض وتحميل الصورة، والبانر، والملف الشخصي المتكامل للعضو.' },
                         { name: '`/ping`', value: 'سرعة استجابة البوت مع خوادم الديسكورد.' },
                         { name: '`/roleinfo /channelinfo`', value: 'عرض معلومات تفصيلية عن الرتبة أو القناة.' },
                         { name: '`/membercount /serverboost`', value: 'إحصائيات الأعضاء والتواجد وبوستات السيرفر.' }
