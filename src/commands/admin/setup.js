@@ -68,10 +68,20 @@ module.exports = {
 
             for (const ch of channelsToCreate) {
                 let channel = interaction.guild.channels.cache.find(c => 
-                    c.name === ch.name && c.parentId === category.id && c.type === ChannelType.GuildText
+                    c.name === ch.name && c.type === ChannelType.GuildText
                 );
 
-                if (!channel) {
+                if (channel) {
+                    // إذا كانت القناة موجودة ولكن خارج الفئة، نقوم بنقلها إليها
+                    if (channel.parentId !== category.id) {
+                        try {
+                            await channel.setParent(category.id);
+                        } catch (error) {
+                            console.error(`خطأ أثناء نقل القناة ${ch.name} إلى الفئة:`, error);
+                        }
+                    }
+                } else {
+                    // إذا لم تكن القناة موجودة، نقوم بإنشائها داخل الفئة
                     channel = await interaction.guild.channels.create({
                         name: ch.name,
                         type: ChannelType.GuildText,
