@@ -2,7 +2,7 @@
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08status')
+        .setName('status')
         .setDescription('حالة السيرفر وإحصائياته'),
     async execute(interaction) {
         const guild = interaction.guild;
@@ -24,3 +24,4 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

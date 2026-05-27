@@ -2,7 +2,7 @@
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08boosters')
+        .setName('boosters')
         .setDescription('قائمة الداعمين (الداعمين للسيرفر)'),
     async execute(interaction) {
         const boosters = interaction.guild.members.cache.filter(m => m.premiumSince);
@@ -17,3 +17,4 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

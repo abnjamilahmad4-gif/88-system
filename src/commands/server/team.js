@@ -4,7 +4,7 @@ const teams = []; // يُفضل استخدام قاعدة بيانات
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08team')
+        .setName('team')
         .setDescription('إدارة فرق سيرفر 08')
         .addSubcommand(sub => 
             sub.setName('create')
@@ -50,3 +50,4 @@ module.exports = {
         }
     },
 };
+

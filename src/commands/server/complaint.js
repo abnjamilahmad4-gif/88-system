@@ -3,8 +3,8 @@ const Guild = require('../../models/Guild');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08appeal')
-        .setDescription('طلب استئناف / طعن في عقوبة (يفتح تذكرة)'),
+        .setName('complaint')
+        .setDescription('تقديم شكوى سريعة (يفتح تذكرة)'),
     async execute(interaction) {
         const guildData = await Guild.findOne({ guildId: interaction.guild.id });
         if (!guildData) {
@@ -25,7 +25,7 @@ module.exports = {
             }
         ];
 
-        // إضافة صلاحيات رتب الإدارة والمشرفين
+        // إضافة صلاحيات رتب الإدارة والمشرفين والمساعدين كطاقم دعم
         if (guildData.admin_roles && guildData.admin_roles.length > 0) {
             guildData.admin_roles.forEach(id => {
                 permissionOverwrites.push({
@@ -42,10 +42,18 @@ module.exports = {
                 });
             });
         }
+        if (guildData.helper_roles && guildData.helper_roles.length > 0) {
+            guildData.helper_roles.forEach(id => {
+                permissionOverwrites.push({
+                    id: id,
+                    allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
+                });
+            });
+        }
 
         try {
             const ticketChannel = await interaction.guild.channels.create({
-                name: `appeal-${interaction.user.username}`,
+                name: `complaint-${interaction.user.username}`,
                 type: ChannelType.GuildText,
                 parent: categoryId,
                 permissionOverwrites: permissionOverwrites,
@@ -53,15 +61,17 @@ module.exports = {
 
             // بناء المنشنز للرتب
             let mentions = '';
-            if (guildData.mod_roles && guildData.mod_roles.length > 0) {
+            if (guildData.helper_roles && guildData.helper_roles.length > 0) {
+                mentions += guildData.helper_roles.map(id => `<@&${id}> `).join('');
+            } else if (guildData.mod_roles && guildData.mod_roles.length > 0) {
                 mentions += guildData.mod_roles.map(id => `<@&${id}> `).join('');
             } else if (guildData.admin_roles && guildData.admin_roles.length > 0) {
                 mentions += guildData.admin_roles.map(id => `<@&${id}> `).join('');
             }
 
             const embed = new EmbedBuilder()
-                .setTitle('⚖️ طلب استئناف عقوبة ⚖️')
-                .setDescription(`مرحباً <@${interaction.user.id}>،\nالرجاء شرح سبب طعنك في العقوبة بوضوح، وسيقوم المشرفون بالرد عليك قريباً.\n\nمنشن المشرفين: ${mentions || '@المشرفين'}`)
+                .setTitle('🚨 تذكرة شكوى 🚨')
+                .setDescription(`مرحباً <@${interaction.user.id}>،\nيرجى طرح شكواك بالتفصيل هنا وسيقوم فريق الدعم بالرد عليك في أقرب وقت.\n\nمنشن الدعم: ${mentions || '@الدعم'}`)
                 .setColor('#FFD700')
                 .setFooter({ text: 'سيرفر 08' });
 
@@ -77,8 +87,8 @@ module.exports = {
             await ticketChannel.send({ content: `${mentions} | <@${interaction.user.id}>`, embeds: [embed], components: [row] });
 
             const replyEmbed = new EmbedBuilder()
-                .setTitle('✅ تم إنشاء طلبك')
-                .setDescription(`تم فتح تذكرة استئناف بنجاح: <#${ticketChannel.id}>`)
+                .setTitle('✅ تم تقديم الشكوى')
+                .setDescription(`تم فتح تذكرة لشكواك بنجاح: <#${ticketChannel.id}>`)
                 .setColor('#FFD700');
 
             await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
@@ -88,3 +98,4 @@ module.exports = {
         }
     },
 };
+

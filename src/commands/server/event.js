@@ -5,7 +5,7 @@ const events = [];
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08event')
+        .setName('event')
         .setDescription('إدارة فعاليات سيرفر 08')
         .addSubcommand(sub => 
             sub.setName('create')
@@ -57,3 +57,4 @@ module.exports = {
         }
     },
 };
+

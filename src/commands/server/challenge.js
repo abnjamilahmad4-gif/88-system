@@ -2,7 +2,7 @@
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08challenge')
+        .setName('challenge')
         .setDescription('تحدي فريق آخر في السيرفر')
         .addStringOption(opt => opt.setName('team').setDescription('اسم الفريق المراد تحديه').setRequired(true))
         .addStringOption(opt => opt.setName('game').setDescription('اللعبة أو نوع التحدي').setRequired(true)),
@@ -22,3 +22,4 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

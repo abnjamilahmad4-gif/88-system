@@ -2,7 +2,7 @@
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08rules')
+        .setName('rules')
         .setDescription('قوانين سيرفر 08'),
     async execute(interaction) {
         const embed = new EmbedBuilder()
@@ -20,3 +20,4 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

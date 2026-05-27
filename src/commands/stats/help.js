@@ -62,8 +62,8 @@ module.exports = {
                     emoji: '👥'
                 },
                 {
-                    label: 'أوامر سيرفر 08',
-                    description: 'أوامر 08verify, 08apply, 08rules, 08team...',
+                    label: 'أوامر السيرفر الخاصة',
+                    description: 'أوامر verify, apply, rules, team...',
                     value: 'server08',
                     emoji: '👑'
                 }
@@ -158,16 +158,16 @@ module.exports = {
             }
             else if (selectedValue === 'server08') {
                 updatedEmbed
-                    .setTitle('👑 أوامر سيرفر 08 الخاصة')
-                    .setDescription('مجموعة الأوامر المعدة خصيصاً لهوية سيرفر 08:')
+                    .setTitle('👑 أوامر السيرفر الخاصة')
+                    .setDescription('مجموعة الأوامر المعدة خصيصاً لهوية السيرفر:')
                     .addFields(
-                        { name: '`/08verify`', value: 'إرسال لوحة التوثيق لتوثيق الحسابات برتبة العضوية.' },
-                        { name: '`/08apply /08appeal`', value: 'تقديم طلب التقديم للإشراف أو طلب فك الحظر.' },
-                        { name: '`/08rules /08info`', value: 'عرض شروط وقوانين السيرفر وقوانينه المنسقة.' },
-                        { name: '`/08team /08partners`', value: 'عرض شركاء السيرفر وأعضاء الطاقم الإداري.' },
-                        { name: '`/08boosters /08halloffame`', value: 'لوحات الشرف للداعمين والأعضاء الأسطوريين.' },
-                        { name: '`/08event /08challenge`', value: 'الإعلان عن تحديات ومسابقات جديدة للسيرفر.' },
-                        { name: '`/08complaint /08feedback`', value: 'تقديم شكوى أو اقتراح إيجابي لتطوير السيرفر.' }
+                        { name: '`/verify`', value: 'إرسال لوحة التوثيق لتوثيق الحسابات برتبة العضوية.' },
+                        { name: '`/apply /appeal`', value: 'تقديم طلب التقديم للإشراف أو طلب فك الحظر.' },
+                        { name: '`/rules /info`', value: 'عرض شروط وقوانين السيرفر وقوانينه المنسقة.' },
+                        { name: '`/team /partners`', value: 'عرض شركاء السيرفر وأعضاء الطاقم الإداري.' },
+                        { name: '`/boosters /halloffame`', value: 'لوحات الشرف للداعمين والأعضاء الأسطوريين.' },
+                        { name: '`/event /challenge`', value: 'الإعلان عن تحديات ومسابقات جديدة للسيرفر.' },
+                        { name: '`/complaint /feedback`', value: 'تقديم شكوى أو اقتراح إيجابي لتطوير السيرفر.' }
                     );
             }
 

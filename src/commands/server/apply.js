@@ -3,7 +3,7 @@ const Guild = require('../../models/Guild');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08apply')
+        .setName('apply')
         .setDescription('تقديم طلب للإدارة (يفتح تذكرة)'),
     async execute(interaction) {
         const guildData = await Guild.findOne({ guildId: interaction.guild.id });
@@ -78,3 +78,4 @@ module.exports = {
         }
     },
 };
+

@@ -4,7 +4,7 @@ const config = require('../../config');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08verify')
+        .setName('verify')
         .setDescription('إعداد نظام التوثيق (للإدارة فقط)')
         .addSubcommand(sub => 
             sub.setName('setup')
@@ -83,3 +83,4 @@ module.exports = {
         }
     },
 };
+

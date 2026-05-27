@@ -2,7 +2,7 @@
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('08announcement')
+        .setName('announcement')
         .setDescription('إرسال إعلان مميز يمنشن everyone (للإداريين فقط)')
         .addStringOption(opt => opt.setName('title').setDescription('عنوان الإعلان').setRequired(true))
         .addStringOption(opt => opt.setName('content').setDescription('محتوى الإعلان').setRequired(true))
@@ -29,3 +29,4 @@ module.exports = {
         }
     },
 };
+
