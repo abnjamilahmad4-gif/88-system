@@ -151,6 +151,42 @@ module.exports = {
                     const todayRiyadh = getRiyadhMidnight(new Date());
                     const yesterdayRiyadh = new Date(todayRiyadh.getTime() - 24 * 60 * 60 * 1000);
 
+                    // دالة لإرسال التقييم الأسطوري وحذفه بعد 5 ثوانٍ
+                    const sendLegendaryConfirmation = async (streak, statusText) => {
+                        const { EmbedBuilder } = require('discord.js');
+                        const imageUrl = imageAttachments.first()?.url || (hasImageLink ? message.content.match(/https?:\/\/\S+/)?.[0] : null);
+
+                        const embed = new EmbedBuilder()
+                            .setTitle('🔥 تم تحديث الستريك بنجاح! | Streak Updated')
+                            .setColor(config.colors?.primary || '#FFD700')
+                            .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+                            .setDescription(
+                                `⚡ **الحالة:** ${statusText}\n\n` +
+                                `👤 **العضو:** ${message.author}\n` +
+                                `🔥 **الستريك الحالي:** \`${streak.currentStreak}\` يوم متتالي\n` +
+                                `⭐ **أعلى ستريك:** \`${streak.maxStreak}\` يوم\n` +
+                                `📸 **أرسل الآن:** \`${photoCount}\` صورة (${streak.todayPhotos} إجمالي اليوم)\n` +
+                                `📊 **إجمالي الصور المنشورة:** \`${streak.totalPhotos}\` صورة\n\n` +
+                                `⏳ *ستحذف هذه الرسالة التلقائية خلال 5 ثوانٍ.*`
+                            )
+                            .setTimestamp();
+
+                        if (imageUrl) {
+                            embed.setImage(imageUrl);
+                        }
+
+                        const sentMsg = await message.channel.send({
+                            content: `🔔 ${message.author} **تم تحديث الستريك الخاص بك!**`,
+                            embeds: [embed]
+                        }).catch(() => null);
+
+                        if (sentMsg) {
+                            setTimeout(() => {
+                                sentMsg.delete().catch(() => {});
+                            }, 5000);
+                        }
+                    };
+
                     let streakData = await Streak.findOne({ guildId: message.guild.id, userId: authorId });
 
                     if (!streakData) {
@@ -166,20 +202,20 @@ module.exports = {
                         });
                         await streakData.save();
 
-                        // رسالة ترحيب بالستريك الأول
-                        message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 — استمر! (📸 أرسل ${photoCount} صورة)`).catch(() => {});
+                        await sendLegendaryConfirmation(streakData, 'بدء ستريك جديد بنجاح! 🎉');
                     } else {
                         const lastDate = streakData.lastStreakDate ? new Date(streakData.lastStreakDate) : null;
 
                         if (lastDate) {
                             const lastDateRiyadh = getRiyadhMidnight(lastDate);
 
-                            // إذا سجل اليوم مسبقاً، لا نزيد الستريك ولكن نزيد عدد الصور اليومية والإجمالية
+                            // إذا سجل اليوم مسبقاً، نزيد عدد الصور اليومية والإجمالية ونرسل تأكيداً مؤقتاً
                             if (lastDateRiyadh.getTime() === todayRiyadh.getTime()) {
                                 streakData.totalPhotos += photoCount;
                                 streakData.todayPhotos += photoCount;
                                 await streakData.save();
-                                // لا نرسل رسالة ستريك جديدة لتجنب التكرار المزعج ولكن حدثنا الصور
+
+                                await sendLegendaryConfirmation(streakData, 'تحديث صور اليوم بالستريك! 📸');
                             }
                             // إذا سجل بالأمس، يستمر الستريك ونزيد الصور ونحدث اليومية
                             else if (lastDateRiyadh.getTime() === yesterdayRiyadh.getTime()) {
@@ -192,8 +228,7 @@ module.exports = {
                                 streakData.todayPhotos = photoCount; // إعادة تعيين لليوم الجديد
                                 await streakData.save();
 
-                                const streakEmoji = streakData.currentStreak >= 7 ? '🏆' : '🔥';
-                                message.channel.send(`${streakEmoji} ${message.author} واصل الستريك! **${streakData.currentStreak}** يوم متتالي! (📸 أرسل اليوم ${photoCount} صورة)`).catch(() => {});
+                                await sendLegendaryConfirmation(streakData, 'مواصلة الستريك اليومي بنجاح! 🚀');
                             }
                             // إذا فات أكثر من يوم، ينقطع الستريك ويبدأ من جديد
                             else {
@@ -204,11 +239,11 @@ module.exports = {
                                 streakData.todayPhotos = photoCount;
                                 await streakData.save();
 
-                                if (oldStreak > 1) {
-                                    message.channel.send(`😢 ${message.author} انقطع الستريك عند **${oldStreak}** يوم! بداية جديدة — يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
-                                } else {
-                                    message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
-                                }
+                                const statusText = oldStreak > 1 
+                                    ? `بدء ستريك جديد بعد انقطاع الستريك السابق عند ${oldStreak} يوم 😢`
+                                    : 'بدء ستريك جديد بنجاح! 🌟';
+                                
+                                await sendLegendaryConfirmation(streakData, statusText);
                             }
                         } else {
                             // لم يكن لديه تاريخ سابق
@@ -218,7 +253,8 @@ module.exports = {
                             streakData.totalPhotos += photoCount;
                             streakData.todayPhotos = photoCount;
                             await streakData.save();
-                            message.channel.send(`🔥 ${message.author} بدأ ستريك جديد! يوم 1 (📸 أرسل ${photoCount} صورة)`).catch(() => {});
+
+                            await sendLegendaryConfirmation(streakData, 'بدء ستريك جديد بنجاح! 🎉');
                         }
                     }
                 }
