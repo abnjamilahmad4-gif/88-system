@@ -151,40 +151,27 @@ module.exports = {
                     const todayRiyadh = getRiyadhMidnight(new Date());
                     const yesterdayRiyadh = new Date(todayRiyadh.getTime() - 24 * 60 * 60 * 1000);
 
-                    // دالة لإرسال التقييم الأسطوري وحذفه بعد 5 ثوانٍ
+                    // دالة لإرسال تأكيد الستريك بالعرض دون تكرار الصورة ودون حذف الرسالة
                     const sendLegendaryConfirmation = async (streak, statusText) => {
                         const { EmbedBuilder } = require('discord.js');
-                        const imageUrl = imageAttachments.first()?.url || (hasImageLink ? message.content.match(/https?:\/\/\S+/)?.[0] : null);
 
                         const embed = new EmbedBuilder()
                             .setTitle('🔥 تم تحديث الستريك بنجاح! | Streak Updated')
                             .setColor(config.colors?.primary || '#FFD700')
                             .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-                            .setDescription(
-                                `⚡ **الحالة:** ${statusText}\n\n` +
-                                `👤 **العضو:** ${message.author}\n` +
-                                `🔥 **الستريك الحالي:** \`${streak.currentStreak}\` يوم متتالي\n` +
-                                `⭐ **أعلى ستريك:** \`${streak.maxStreak}\` يوم\n` +
-                                `📸 **أرسل الآن:** \`${photoCount}\` صورة (${streak.todayPhotos} إجمالي اليوم)\n` +
-                                `📊 **إجمالي الصور المنشورة:** \`${streak.totalPhotos}\` صورة\n\n` +
-                                `⏳ *ستحذف هذه الرسالة التلقائية خلال 5 ثوانٍ.*`
+                            .setDescription(`⚡ **الحالة:** ${statusText}`)
+                            .addFields(
+                                { name: '🔥 الستريك الحالي', value: `**${streak.currentStreak}** يوم`, inline: true },
+                                { name: '⭐ أعلى ستريك', value: `**${streak.maxStreak}** يوم`, inline: true },
+                                { name: '📸 صور اليوم', value: `**${streak.todayPhotos}** صور`, inline: true },
+                                { name: '📊 إجمالي الصور', value: `**${streak.totalPhotos}** صورة`, inline: true }
                             )
                             .setTimestamp();
 
-                        if (imageUrl) {
-                            embed.setImage(imageUrl);
-                        }
-
-                        const sentMsg = await message.channel.send({
+                        await message.channel.send({
                             content: `🔔 ${message.author} **تم تحديث الستريك الخاص بك!**`,
                             embeds: [embed]
                         }).catch(() => null);
-
-                        if (sentMsg) {
-                            setTimeout(() => {
-                                sentMsg.delete().catch(() => {});
-                            }, 5000);
-                        }
                     };
 
                     let streakData = await Streak.findOne({ guildId: message.guild.id, userId: authorId });
